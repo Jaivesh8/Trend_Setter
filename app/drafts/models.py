@@ -9,11 +9,12 @@ class Draft(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-
-    hook = Column(JSON)
-    script = Column(JSON)
-    hashtags = Column(JSON)
-    references = Column(JSON)
+ # Full AI / idea response stored as-is
+    content = Column(JSON, nullable=False)
+    # hook = Column(JSON)
+    # script = Column(JSON)
+    # hashtags = Column(JSON)
+    # references = Column(JSON)
 
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

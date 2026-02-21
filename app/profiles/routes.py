@@ -5,7 +5,7 @@ from app.db.database import SessionLocal, engine
 from app.profiles import models, schemas
 from app.auth.deps import get_current_user
 from app.profiles.models import Niche
-#models.Base.metadata.create_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 router = APIRouter()
 
@@ -39,13 +39,13 @@ def create_or_update_profile(
     if profile:
         # Update existing profile
         profile.niches.clear()  # ✅ only clear if profile exists
-        for key, value in data.dict(exclude={"niches"}).items():
+        for key, value in data.model_dump(exclude={"niches"}).items():
             setattr(profile, key, value)
     else:
         # Create new profile
         profile = models.Profile(
             user_id=current_user.id,
-            **data.dict(exclude={"niches"})
+            **data.model_dump(exclude={"niches"})
         )
         db.add(profile)
         db.flush()  # ✅ ensures profile.id exists

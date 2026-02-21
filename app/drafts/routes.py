@@ -14,10 +14,11 @@ def create_draft(
 ):
     draft = models.Draft(
         user_id=current_user.id,
-        hook=data.hook,
-        script=data.script,
-        hashtags=data.hashtags,
-        references=data.references,
+        content=data.content,
+        # hook=data.hook,
+        # script=data.script,
+        # hashtags=data.hashtags,
+        # references=data.references,
     )
 
     db.add(draft)

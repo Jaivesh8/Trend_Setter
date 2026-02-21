@@ -12,6 +12,7 @@ class ProfileCreateUpdate(BaseModel):
     niches: List[str] = []
 
 class ProfileResponse(BaseModel):
+    model_config = {"from_attributes": True}  
     display_name: str
     creator_type: str
     organization_type: Optional[str]
