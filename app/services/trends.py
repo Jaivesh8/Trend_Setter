@@ -1,9 +1,9 @@
 from pytrends.request import TrendReq
-pytrend = TrendReq()
 def fetch_google_trending_keywords(keyword: str,region:str="IN"):
         pytrends = TrendReq(
         hl="en-IN",      # language: English India
-        tz=330           # timezone offset (India)
+        tz=330 ,
+        backoff_factor=0.2              # timezone offset (India)
     )
  # 1️⃣ Build payload
         pytrends.build_payload(

@@ -48,3 +48,7 @@ def get_trending_keywords(
         }
         for r in rows
     ]
+# @router.get("/test-pytrends")
+# def test_pytrends(niche: str = "dance"):
+#     from app.services.trends import fetch_google_trending_keywords
+#     return fetch_google_trending_keywords(niche)
