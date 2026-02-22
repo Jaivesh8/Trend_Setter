@@ -9,7 +9,8 @@ from langgraph.graph import StateGraph, END
 from pydantic import BaseModel, Field
 
 from app.transcript.query_pipeline import query_reels
-
+from dotenv import load_dotenv
+load_dotenv()
 
 # ── Pydantic output schema (unchanged) ───────────────────────────────────────
 class IdeaStructure(BaseModel):
