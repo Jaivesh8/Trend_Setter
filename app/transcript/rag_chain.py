@@ -59,22 +59,27 @@ llm = _base_llm.with_structured_output(StrategistOutput, method="json_mode")
 # Retrieved Reels:
 # {context}
 # """
-system_prompt = """
-You are an expert social media performance analyst and viral content strategist specializing in Instagram Reels.
+# system_prompt = """
+# You are an expert social media performance analyst and viral content strategist specializing in Instagram Reels.
 
-Analyze the retrieved reels and return a JSON response. IMPORTANT: Every field marked as a list MUST be a JSON array, even if it contains only one item.
+# Analyze the retrieved reels and return a JSON response. IMPORTANT: Every field marked as a list MUST be a JSON array, even if it contains only one item.
 
-Your response must be valid JSON with exactly these fields:
-- "analysis": {{"performance_drivers": ["string1", "string2"], "engagement_triggers": ["string1", "string2"]}}
-- "patterns": ["string1", "string2"]
-- "ideas": [{{"concept": "string", "hook": "string", "structure": ["step1", "step2", "step3"], "emotion": "string", "why_it_works": "string"}}]
-- "best_fit_recommendation": {{"best_idea_index": 0, "reason": "string"}}
-- "optimization_suggestion": {{"second_idea_emotional_variant": {{"change": "string", "add": "string", "result": "string"}}}}
+# Your response must be valid JSON with exactly these fields:
+# - "analysis": {{"performance_drivers": ["string1", "string2"], "engagement_triggers": ["string1", "string2"]}}
+# - "patterns": ["string1", "string2"]
+# - "ideas": [{{"concept": "string", "hook": "string", "structure": ["step1", "step2", "step3"], "emotion": "string", "why_it_works": "string"}}]
+# - "best_fit_recommendation": {{"best_idea_index": 0, "reason": "string"}}
+# - "optimization_suggestion": {{"second_idea_emotional_variant": {{"change": "string", "add": "string", "result": "string"}}}}
 
-Retrieved Reels:
-{{context}}
-"""
+# Retrieved Reels:
+# {{context}}
+# """
+system_prompt = """You are an expert viral content strategist for Instagram Reels. Analyze the retrieved reels and output ONLY a single-line minified JSON object with no newlines inside string values. Do not use \\n inside any string value. Keep all string values on one line.
 
+Required JSON structure (all strings must be single-line, no newlines):
+{{"analysis":{{"performance_drivers":["driver1","driver2"],"engagement_triggers":["trigger1","trigger2"]}},"patterns":["pattern1","pattern2"],"ideas":[{{"concept":"one line","hook":"one line","structure":["step1","step2","step3","step4","step5"],"emotion":"one word","why_it_works":"one line"}},{{"concept":"one line","hook":"one line","structure":["step1","step2","step3","step4","step5"],"emotion":"one word","why_it_works":"one line"}},{{"concept":"one line","hook":"one line","structure":["step1","step2","step3","step4","step5"],"emotion":"one word","why_it_works":"one line"}}],"best_fit_recommendation":{{"best_idea_index":0,"reason":"one line"}},"optimization_suggestion":{{"second_idea_emotional_variant":{{"change":"one line","add":"one line","result":"one line"}}}}}}
+
+Retrieved Reels: {context}"""
 prompt = ChatPromptTemplate.from_messages([
     ("system", system_prompt),
     MessagesPlaceholder("chat_history"),

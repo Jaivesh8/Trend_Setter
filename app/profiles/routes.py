@@ -31,7 +31,7 @@ def get_profile(
 
     if profile is None:
         raise HTTPException(status_code=404, detail="Profile not found")
-
+    
     return profile
     # return db.query(models.Profile).filter(
     #     models.Profile.user_id ==current_user.id
