@@ -8,7 +8,8 @@ from app.trends.routes import router as trends_router
 from app.trends.models import TrendingKeyword
 from app.db.database import Base, engine
 from app.transcript.routes import router as transcript_router
-
+from dotenv import load_dotenv
+load_dotenv()
 
 Base.metadata.create_all(bind=engine)
 TrendingKeyword.metadata.create_all(bind=engine)
