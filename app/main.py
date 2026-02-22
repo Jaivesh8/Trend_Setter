@@ -7,6 +7,9 @@ from app.db.database import engine
 from app.trends.routes import router as trends_router
 from app.trends.models import TrendingKeyword
 from app.db.database import Base, engine
+from app.transcript.routes import router as transcript_router
+
+
 Base.metadata.create_all(bind=engine)
 TrendingKeyword.metadata.create_all(bind=engine)
 app = FastAPI(
@@ -40,6 +43,7 @@ app.include_router(
      trends_router,
     tags=["Trends"]
 )
+app.include_router(transcript_router, tags=["Transcript"])
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)

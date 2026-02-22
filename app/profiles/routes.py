@@ -5,6 +5,8 @@ from app.db.database import SessionLocal, engine
 from app.profiles import models, schemas
 from app.auth.deps import get_current_user
 from app.profiles.models import Niche
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session, joinedload
 models.Base.metadata.create_all(bind=engine)
 
 router = APIRouter()
@@ -21,9 +23,19 @@ def get_profile(
     current_user = Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    return db.query(models.Profile).filter(
-        models.Profile.user_id ==current_user.id
+    profile = db.query(models.Profile).options(
+        joinedload(models.Profile.niches)
+    ).filter(
+        models.Profile.user_id == current_user.id
     ).first()
+
+    if profile is None:
+        raise HTTPException(status_code=404, detail="Profile not found")
+
+    return profile
+    # return db.query(models.Profile).filter(
+    #     models.Profile.user_id ==current_user.id
+    # ).first()
 
 
 @router.post("/profile")
