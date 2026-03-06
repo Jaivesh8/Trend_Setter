@@ -4,6 +4,8 @@ from typing import List, Optional, Dict, Any
 import os
 from dotenv import load_dotenv
 
+#from app.transcript.rag_chain import conversational_rag
+
 load_dotenv()
 
 router = APIRouter(prefix="/transcript", tags=["Transcript"])
@@ -15,8 +17,8 @@ _rag = None
 def get_rag():
     global _rag
     if _rag is None:
-        from app.transcript.rag_chain import conversational_rag
-        _rag = conversational_rag
+        from app.transcript.rag_chain import run_optimized_pipeline
+        _rag = run_optimized_pipeline
     return _rag
 
 
@@ -32,25 +34,14 @@ class ReelQueryRequest(BaseModel):
 def query_reels_endpoint(request: ReelQueryRequest):
     try:
         result = get_rag()(request.query)
-        answer = result["answer"]
-        sources = [
-            {
-                "id":       doc.metadata.get("id"),
-                "owner":    doc.metadata.get("owner"),
-                "likes":    doc.metadata.get("likes"),
-                "duration": doc.metadata.get("duration"),
-                "score":    doc.metadata.get("rrf_score"),
-                "url":      doc.metadata.get("url"),
-            }
-            for doc in result["context"]
-        ]
+        answer = result.get("answer")
+        sources = result.get("sources", [])
         return {
             "answer": answer.model_dump() if hasattr(answer, "model_dump") else answer,
             "sources": sources
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 def get_engine():
     global _engine
