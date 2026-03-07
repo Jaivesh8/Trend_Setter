@@ -45,16 +45,33 @@ class AgentState(TypedDict):
     answer: Optional[StrategistOutput]
     sources: List[dict]
 
+# _base_llm = ChatBedrock(
+#     model_id="meta.llama3-70b-instruct-v1:0",
+#     region_name="ap-south-1",
+#     model_kwargs={
+#         "max_gen_len": 4096,
+#         "temperature": 0.7,
+#     }
+# )
+# llm = _base_llm
+# _base_llm = ChatBedrock(
+#     model_id="anthropic.claude-3-haiku-20240307-v1:0",
+#     region_name="ap-south-1",
+#     model_kwargs={
+#         "temperature": 0.7,
+#         "max_tokens": 2048
+#     }
+# )
+# llm = _base_llm.with_structured_output(StrategistOutput)
 _base_llm = ChatBedrock(
     model_id="meta.llama3-70b-instruct-v1:0",
     region_name="ap-south-1",
     model_kwargs={
-        "max_gen_len": 4096,
         "temperature": 0.7,
+        "max_gen_len": 4096,
     }
 )
 llm = _base_llm
-
 # ── LLM ──────────────────────────────────────────────────────────────────────
 #_base_llm = ChatGroq(model="llama-3.3-70b-versatile", temperature=0.85, max_tokens=2048)
 #llm = _base_llm.with_structured_output(StrategistOutput, method="json_mode")
@@ -157,7 +174,7 @@ QUALITY RULES
 
 Respond with ONLY a valid JSON object — no markdown, no explanation, no extra text.
 
-{{"analysis":{{"performance_drivers":["...","..."],"engagement_triggers":["...","..."]}},"patterns":["...","..."],"ideas":[{{"concept":"...","hook":"...","structure":["Scene 1: ...","Scene 2: ...","Scene 3: ...","Scene 4: ...","Scene 5: ..."],"emotion":"...","why_it_works":"...","reference_url":"...","script":["Step 1: ...","Step 2: ...","Step 3: ...","Step 4: ...","Step 5: ..."]}}],"best_fit_recommendation":{{"best_idea_index":0,"reason":"..."}},"optimization_suggestion":{{"second_idea_emotional_variant":{{"change":"...","add":"...","result":"..."}}}}}}
+{{"analysis":{{"performance_drivers":["...","..."],"engagement_triggers":["...","..."]}},"patterns":["...","..."],"ideas":[{{"concept":"...","hook":"...","structure":["Scene 1: ...","Scene 2: ...","Scene 3: ...","Scene 4: ...","Scene 5: ..."],"emotion":"...","why_it_works":"...","reference_url":"..."}}],"best_fit_recommendation":{{"best_idea_index":0,"reason":"..."}},"optimization_suggestion":{{"second_idea_emotional_variant":{{"change":"...","add":"...","result":"..."}}}}}}
 
 Retrieved Reels:
 {context}"""
@@ -194,23 +211,89 @@ def retrieve(state: AgentState) -> AgentState:
     return {**state, "documents": docs, "sources": sources}
 
 
+# def generate(state: AgentState) -> AgentState:
+#     """Node 2: run LLM with retrieved context"""
+#     context = "\n\n".join(d.page_content for d in state["documents"])
+#     raw = llm.invoke(prompt.format_messages(
+#         context=context,
+#         chat_history=state["chat_history"],
+#         input=state["query"]
+#     ))
+#     try:
+#         text = raw.content.strip()
+#         text = text.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+#         parsed = StrategistOutput.model_validate_json(text)
+#     except Exception as e:
+#         print(f"[generate] Parse error: {e}")
+#         parsed = None
+#     return {**state, "answer": parsed}
+# def generate(state: AgentState) -> AgentState:
+#     context = "\n\n".join(d.page_content for d in state["documents"])
+#     try:
+#         parsed = llm.invoke(prompt.format_messages(
+#             context=context,
+#             chat_history=state["chat_history"],
+#             input=state["query"]
+#         ))
+#     except Exception as e:
+#         print(f"[generate] LLM error: {e}")
+#         parsed = StrategistOutput(
+#             analysis=AnalysisBlock(performance_drivers=[], engagement_triggers=[]),
+#             patterns=[],
+#             ideas=[],
+#             best_fit_recommendation=BestFitRecommendation(
+#                 best_idea_index=0, reason="Generation failed"
+#             ),
+#             optimization_suggestion=OptimizationSuggestion(
+#                 second_idea_emotional_variant=OptimizationVariant(
+#                     change="", add="", result=""
+#                 )
+#             )
+#         )
+#     return {**state, "answer": parsed}
 def generate(state: AgentState) -> AgentState:
-    """Node 2: run LLM with retrieved context"""
     context = "\n\n".join(d.page_content for d in state["documents"])
-    raw = llm.invoke(prompt.format_messages(
-        context=context,
-        chat_history=state["chat_history"],
-        input=state["query"]
-    ))
-    try:
-        text = raw.content.strip()
-        text = text.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
-        parsed = StrategistOutput.model_validate_json(text)
-    except Exception as e:
-        print(f"[generate] Parse error: {e}")
-        parsed = None
-    return {**state, "answer": parsed}
+    
+    _fallback = StrategistOutput(
+        analysis=AnalysisBlock(performance_drivers=[], engagement_triggers=[]),
+        patterns=[],
+        ideas=[],
+        best_fit_recommendation=BestFitRecommendation(
+            best_idea_index=0, reason="Generation failed"
+        ),
+        optimization_suggestion=OptimizationSuggestion(
+            second_idea_emotional_variant=OptimizationVariant(
+                change="", add="", result=""
+            )
+        )
+    )
 
+    try:
+        raw = llm.invoke(prompt.format_messages(
+            context=context,
+            chat_history=state["chat_history"],
+            input=state["query"]
+        ))
+        text = raw.content.strip()
+        
+        # strip markdown fences if present
+        text = text.removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+        
+        # extract JSON object if model added extra text around it
+        start = text.find("{")
+        end = text.rfind("}") + 1
+        if start == -1 or end == 0:
+            print("[generate] No JSON object found in response")
+            return {**state, "answer": _fallback}
+        
+        text = text[start:end]
+        parsed = StrategistOutput.model_validate_json(text)
+
+    except Exception as e:
+        print(f"[generate] Error: {e}")
+        return {**state, "answer": _fallback}
+
+    return {**state, "answer": parsed}
 
 def update_history(state: AgentState) -> AgentState:
     """Node 3: persist chat turn"""
