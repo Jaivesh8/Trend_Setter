@@ -1,218 +1,192 @@
-Trend Setter 🚀
-Discover Trends. Turn Ideas into Content.
+# 🚀 Trend Setter
 
-Trend Setter is a platform designed to help creators discover trending topics, hashtags, and content ideas while organizing their creative workflow in one place.
+**Discover Trends. Turn Ideas into Content.**
 
-The platform enables users to explore what is currently trending and transform those insights into structured drafts for future content.
+Trend Setter is an AI-powered platform designed for content creators to
+discover trending topics, hashtags, and content ideas while organizing
+their creative workflow in one place.
 
-📌 Overview
+The platform helps creators transform real-time trend insights into
+structured content drafts, making content creation more data-driven and
+efficient.
 
-Creating engaging content requires understanding what people are currently interested in. Trend Setter helps bridge the gap between trend discovery and content creation by providing tools that allow users to:
+------------------------------------------------------------------------
 
-Discover trending keywords and hashtags
+# 📌 Overview
 
-Explore trends across niches
+Trend Setter bridges the gap between trend discovery and content
+creation by providing tools that allow users to:
 
-Save and organize content ideas
+-   Discover trending keywords and hashtags
+-   Explore trends across niches
+-   Save and organize content ideas
+-   Manage drafts for future posts
+-   Generate AI-powered content insights
 
-Manage drafts for future posts
+------------------------------------------------------------------------
 
-The goal of the platform is to make content ideation faster and more data-driven.
+# 🧠 Problem
 
-✨ Features
-🔐 Authentication
+Content creators often struggle with:
 
-Secure authentication system that allows users to create accounts and log in safely.
+-   Finding trending topics quickly
+-   Understanding why certain content goes viral
+-   Organizing multiple content drafts
+-   Generating consistent content ideas
 
-Features include:
+------------------------------------------------------------------------
 
-User registration
+# 💡 Solution
 
-Login authentication
+Trend Setter provides a creator toolkit that enables users to:
 
-Token-based session management
+-   Discover trending reels and hashtags
+-   Generate optimized content ideas
+-   Analyze engagement patterns
+-   Manage drafts in one place
+-   Refine ideas using AI chat
 
-👤 User Profiles
+------------------------------------------------------------------------
 
-Each user can maintain a personalized profile.
+# 📱 Mobile Application (TrendCrafters)
 
-Profiles allow users to:
+The Android app provides an interactive experience to discover trends
+and manage content ideas.
 
-Select content niches
+Built using **Kotlin + Jetpack Compose** with a modern UI and smooth
+animations.
 
-Manage personal information
+------------------------------------------------------------------------
 
-Customize their experience on the platform
+# ✨ Features
 
-📝 Draft Management
+## 🎬 Trending Reels Discovery
 
-Users can store and organize their content ideas before publishing.
+-   Animated video card stack showcasing trending reels
+-   Videos streamed from AWS S3
+-   Auto rotating card stack every 3 seconds
+-   Smooth spring animations
 
-Draft features include:
+## 🔐 Authentication
 
-Creating new drafts
+-   Secure login & signup
+-   JWT token management
+-   Password visibility toggle
+-   Error handling with loading indicators
 
-Updating existing drafts
+## 🧭 Onboarding
 
-Viewing all saved drafts
+7-step personalization questionnaire:
 
-Retrieving a specific draft
+-   Content niche
+-   Target audience
+-   Platform
+-   Creator goals
+-   Experience level
 
-Deleting drafts
+## 🏠 Home Dashboard
 
-This allows creators to build and refine content ideas over time.
+-   Trending reels
+-   Live hashtag suggestions
+-   Interactive hashtag chips
+-   AI content inspiration
 
-📈 Trending Insights
+## 📝 Draft Manager
 
-Trend Setter provides insight into trending topics and hashtags.
+Manage and organize content drafts.
 
-The system collects trending information and exposes it in an easy-to-use format so creators can quickly identify:
+Draft states:
 
-Popular keywords
+-   Ready
+-   In Progress
+-   Needs Review
 
-Trending hashtags
+## 💬 AI Chat Assistant
 
-Emerging topics across niches
+Helps creators:
 
-These insights help users align their content with current audience interests.
+-   Generate reel ideas
+-   Improve captions
+-   Brainstorm viral concepts
 
-🏗️ Technology Stack
+------------------------------------------------------------------------
 
-Trend Setter is built using modern backend technologies designed for scalability and performance.
+# 🛠 Tech Stack
 
-Core Technologies
+  Layer          Technology
+  -------------- --------------------
+  Language       Kotlin
+  UI             Jetpack Compose
+  Architecture   MVVM
+  Networking     Retrofit
+  Video          ExoPlayer
+  Animations     Lottie
+  Navigation     Compose Navigation
 
-Python
+------------------------------------------------------------------------
 
-FastAPI
+# 🖥 Backend
 
-SQLAlchemy
+Backend built with **FastAPI** and **PostgreSQL**.
 
-Pydantic
+## Backend Stack
 
-Authentication
+-   Python
+-   FastAPI
+-   SQLAlchemy
+-   Pydantic
+-   JWT Authentication
+-   PostgreSQL
+-   PyTrends
+-   AWS EC2
 
-JWT (JSON Web Tokens)
+------------------------------------------------------------------------
 
-OAuth2 Password Flow
+# 📂 Backend Structure
 
-Database
-
-PostgreSQL
-
-Trend Data
-
-Google Trends (via PyTrends)
-
-Deployment
-
-AWS EC2
-
-Uvicorn ASGI Server
-
-📂 Project Structure
 trend_backend/
-│
-├── app/
-│   ├── api/
-│   │   └── routes/
-│   │       ├── auth.py
-│   │       ├── drafts.py
-│   │       ├── profiles.py
-│   │       └── trending.py
-│
-│   ├── core/
-│   │   ├── config.py
-│   │   └── security.py
-│
-│   ├── models/
-│   │   ├── user.py
-│   │   └── draft.py
-│
-│   ├── schemas/
-│   │   ├── user_schema.py
-│   │   └── draft_schema.py
-│
-│   ├── services/
-│   │   └── trends_service.py
-│
-│   └── main.py
-│
-├── requirements.txt
-└── README.md
-⚙️ Installation
 
-Clone the repository:
+app/ api/routes/ auth.py drafts.py profiles.py trending.py
 
-git clone https://github.com/Jaivesh8/Trend_Setter.git
-cd Trend_Setter
+core/ config.py security.py
 
-Create a virtual environment:
+models/ user.py draft.py
 
-python -m venv venv
+schemas/ user_schema.py draft_schema.py
 
-Activate the environment:
+services/ trends_service.py
 
-Windows
+main.py
 
-venv\Scripts\activate
+------------------------------------------------------------------------
 
-Linux / macOS
+# ▶️ Run Backend
 
-source venv/bin/activate
-
-Install dependencies:
-
-pip install -r requirements.txt
-▶️ Running the Application
-
-Start the server:
-
+``` bash
 uvicorn app.main:app --reload
+```
 
-The application will run at:
+Server runs at:
 
 http://127.0.0.1:8000
 
-Interactive API documentation:
+Docs:
 
 http://127.0.0.1:8000/docs
-🔌 API Endpoints
-Authentication
-POST /auth/signup
-POST /auth/login
-Profiles
-GET /profile
-PUT /profile
-Drafts
-POST /drafts
-GET /drafts
-GET /drafts/{id}
-PUT /drafts/{id}
-DELETE /drafts/{id}
-Trends
-GET /trending/hashtags
-GET /trending/keywords
-🚀 Future Improvements
 
-Potential enhancements include:
+------------------------------------------------------------------------
 
-AI-generated content ideas
-
-Caption and script generation
-
-Personalized trend recommendations
-
-Scheduled trend updates
-
-Creator analytics
-
-Advanced search and filtering
-
-👨‍💻 Author
-
-Jaivesh Chopra
+# 👨‍💻 AuthorS
+Ayush Poddar\
+Computer Engineering Student
+https://github.com/ayush2006-creator
+Jaivesh Chopra\
 Computer Engineering Student
 
-GitHub:
-https://github.com/Jaivesh8
+GitHub: https://github.com/Jaivesh8
+
+------------------------------------------------------------------------
+
+# 📄 License
+
+Hackathon project -- Trend Setter Team
